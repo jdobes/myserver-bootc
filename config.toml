@@ -1,0 +1,5 @@
+[[customizations.user]]
+name = "jan"
+password = "changeme"
+key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCpJEu+szXKqyR3TF3ffb4wAhAGQHkAbvClcuB0Bc6qeVIMTRV0yUmN8iXQxCTX4tSQYs3+3UyeuSG0KGgD1B5jbFvm8EqdmqzV1TrQ6CFyKiu+81LEmyameKcOEbA8XakZ/BvkUJ9vKRm2gPqMmWyyAR0iBgzsqKl+mozoZOOEGrMYE8CMqDvY0EKitFhBKJzq7SMyKC4sBEUPkxYYvl6gyLaPEizWZD81YxP+mBGZMYf+YST48TecVnep9mwn4WU2HzDa4bkPuhvSOyLsBUTZXIPtEjunvMUPhiwhbCssCNh8MMOTunwhy6jzTwMrAyDtVRWabaRjYy5fG8bHZN49 jdobes@redhat.com"
+groups = ["wheel"]
