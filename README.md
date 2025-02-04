@@ -3,44 +3,26 @@
 Customized CentOS Stream 10 bootc image for my servers. It features:
 
 - Extra packages installed
-- amd64 and arm64 variants (to do)
+- amd64 and arm64 variants
 - Automatic weekly image re-build using GitHub Actions (to do)
 
-## Local build
+## How it works
 
-    # Build OCI image (it is using sudo because image builder has to be executed in privileged container in the next step)
-    $ sudo podman build --label=org.opencontainers.image.version=$(git rev-parse --short HEAD)-$(date "+%Y-%m-%d.%H%M%S") --squash -t localhost/myserver-bootc .
+1. Customize the OS in `Containerfile`
+2. Build OCI image using `podman`
+3. (If needed) Build the qcow2 image or ISO installer using `bootc-image-builder`
 
-    # Build qcow2 image from OCI image
-    $ mkdir output
-    $ sudo podman run --rm -it --privileged --pull=newer --security-opt label=type:unconfined_t \
-      -v ./config.toml:/config.toml:ro \
-      -v ./output:/output \
-      -v /var/lib/containers/storage:/var/lib/containers/storage \
-      quay.io/centos-bootc/bootc-image-builder:latest --type qcow2 --local localhost/myserver-bootc
+## Usage
 
-## Local test
+There is a `Makefile` to make local building and testing easier:
 
-    # Running as a container
-    $ sudo podman run --rm -it localhost/myserver-bootc bash
-
-    # Running as a VM
-    $ qemu-system-x86_64 \
-      -M accel=kvm \
-      -cpu host \
-      -smp 2 \
-      -m 4096 \
-      -bios /usr/share/OVMF/OVMF_CODE.fd \
-      -serial stdio \
-      -snapshot output/qcow2/disk.qcow2
-
-    # or on MacOS
-    $ qemu-system-aarch64 \
-      -M accel=hvf \
-      -cpu host \
-      -smp 2 \
-      -m 4096 \
-      -bios $(brew info qemu | grep /opt/homebrew/Cellar/qemu/ | awk '{print $1}')/share/qemu/edk2-aarch64-code.fd \
-      -serial stdio \
-      -machine virt \
-      -snapshot output/qcow2/disk.qcow2
+    $ make help
+    Usage:
+      make
+      all              clean and build OCI + qcow2 image (default)
+      help             show help
+      clean            clean build artifacts
+      build-oci        build OCI image
+      build-qcow       build qcow2 image
+      run-container    run as a container
+      run-vm           run as a virtual machine
