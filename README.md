@@ -8,7 +8,7 @@ Customized CentOS Stream 10 bootc image for my servers. It features:
 
 ## How it works
 
-1. Customize the OS in `Containerfile`
+1. Customize the OS in `Containerfile` and other files
 2. Build OCI image using `podman`
 3. (If needed) Build the qcow2 image or ISO installer using `bootc-image-builder`
 

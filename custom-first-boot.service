@@ -1,0 +1,12 @@
+[Unit]
+Description=Run first boot script
+Wants=network-online.target
+After=network-online.target
+After=osbuild-first-boot.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/custom-first-boot.sh
+
+[Install]
+WantedBy=multi-user.target
