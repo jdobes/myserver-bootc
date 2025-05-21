@@ -14,3 +14,17 @@ echo "Linger enabled for $user."
 
 systemctl mask custom-first-boot.service
 echo "Masked custom-first-boot.service."
+
+cat >> /var/home/$user/.bashrc << EOF
+
+PS1="[\[\e[96m\]\u\[\e[0m\]: \W\$(git branch 2> /dev/null | grep \-e '\* ' | sed 's/^..\(.*\)/ \[\e[92m\](\1)\[\e[0m\]/')]\$ "
+alias caddy-reload="podman exec -w /etc/caddy caddy caddy reload"
+EOF
+
+cat > /var/home/$user/.gitconfig << EOF
+[user]
+	name = Jan Dobes
+	email = git@owny.cz
+[core]
+	editor = vim
+EOF
