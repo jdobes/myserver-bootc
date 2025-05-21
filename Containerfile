@@ -12,6 +12,9 @@ RUN systemctl mask bootc-fetch-apply-updates.timer
 # Setting up permissions for rootless podman
 RUN echo "net.ipv4.ip_unprivileged_port_start=53" >> /etc/sysctl.conf
 
+# Other settings
+RUN echo "PasswordAuthentication no" >> /etc/ssh/sshd_config.d/custom.conf
+
 # Setting up script to run on first boot when user exists
 ADD custom-first-boot.sh      /usr/local/sbin
 ADD custom-first-boot.service /usr/lib/systemd/system/
