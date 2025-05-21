@@ -42,7 +42,7 @@ ifeq ($(platform),Linux x86_64)
 	  -smp 2 \
 	  -m 4096 \
 	  -bios /usr/share/OVMF/OVMF_CODE.fd \
-	  -serial stdio \
+	  -monitor stdio \
 	  -net nic \
 	  -net user,hostfwd=tcp::2222-:22 \
 	  output/qcow2/disk.qcow2
@@ -53,7 +53,7 @@ else ifeq ($(platform),Darwin arm64)
 	  -smp 2 \
 	  -m 4096 \
 	  -bios $(shell brew info qemu | grep /opt/homebrew/Cellar/qemu/ | awk '{print $$1}')/share/qemu/edk2-aarch64-code.fd \
-	  -serial stdio \
+	  -monitor stdio \
 	  -machine virt \
 	  -net nic \
 	  -net user,hostfwd=tcp::2222-:22 \
