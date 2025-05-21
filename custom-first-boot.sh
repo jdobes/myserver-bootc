@@ -26,5 +26,7 @@ cat > /var/home/$user/.gitconfig << EOF
 	editor = vim
 EOF
 
+mkdir -p /var/home/$user/.config/containers/systemd/
+
 systemctl mask custom-first-boot.service
 echo "Masked custom-first-boot.service."
