@@ -1,7 +1,5 @@
 image_name := localhost/myserver-bootc
-commit_id := $(shell git rev-parse --short HEAD)
-timestamp := $(shell date "+%Y%m%d")
-tag := $(commit_id)-$(timestamp)
+tag := $(shell date "+%Y%m%d")
 platform := $(shell uname -sm)
 
 .PHONY: all
