@@ -18,15 +18,15 @@ PS1="[\[\e[96m\]\u\[\e[0m\]: \W\$(git branch 2> /dev/null | grep \-e '\* ' | sed
 alias caddy-reload="podman exec -w /etc/caddy caddy caddy reload"
 EOF
 
-cat > /var/home/$user/.gitconfig << EOF
+gitconfig=/var/home/$user/.gitconfig
+cat > $gitconfig << EOF
 [user]
 	name = Jan Dobes
 	email = git@owny.cz
 [core]
 	editor = vim
 EOF
-
-mkdir -p /var/home/$user/.config/containers/systemd/
+chown $user:$user $gitconfig
 
 systemctl mask custom-first-boot.service
 echo "Masked custom-first-boot.service."
