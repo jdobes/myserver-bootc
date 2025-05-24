@@ -1,4 +1,4 @@
-image_name := localhost/myserver
+image_name := ghcr.io/jdobes/myserver
 tag := $(shell date "+%Y%m%d")
 platform := $(shell uname -sm)
 
