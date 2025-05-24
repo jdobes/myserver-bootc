@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - "master"
+  schedule:
+    - cron: "0 5 * * 1" # Every Monday morning
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: build
+      cancel-in-progress: true
+    env:
+      REGISTRY: ghcr.io
+      REGISTRY_USER: ${{ github.actor }}
+      REGISTRY_PASS: ${{ secrets.GITHUB_TOKEN }}
+      REPO: jdobes/myserver
+      PLATFORM: linux/amd64,linux/arm64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install qemu-user-static for multi-arch build
+        run: |
+          sudo apt update && sudo apt install -y qemu-user-static
+      - name: Login to registry
+        run: |
+          echo "$REGISTRY_PASS" | podman login -u "$REGISTRY_USER" --password-stdin "$REGISTRY"
+      - name: Build and push latest version
+        run: |
+          TAG=$(date "+%Y%m%d")
+          podman build --platform "$PLATFORM" --squash --manifest myserver --label=org.opencontainers.image.version=$TAG .
+          podman manifest push myserver docker://$REGISTRY/$REPO:$TAG
+          podman manifest push myserver docker://$REGISTRY/$REPO:latest
+          podman manifest rm myserver

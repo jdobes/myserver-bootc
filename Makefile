@@ -1,4 +1,4 @@
-image_name := localhost/myserver-bootc
+image_name := localhost/myserver
 tag := $(shell date "+%Y%m%d")
 platform := $(shell uname -sm)
 
