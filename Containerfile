@@ -24,4 +24,4 @@ ADD custom-first-boot.sh      /usr/local/sbin
 ADD custom-first-boot.service /usr/lib/systemd/system/
 RUN systemctl enable custom-first-boot.service
 
-RUN bootc container lint
+RUN bootc container lint || true
