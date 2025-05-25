@@ -16,7 +16,8 @@ clean:  ## clean build artifacts
 
 .PHONY: build-oci
 build-oci:  ## build OCI image
-	sudo podman build --label=org.opencontainers.image.version=$(tag) --squash -t $(image_name):$(tag) -t $(image_name):latest .
+# --pull=newer is broken currently - https://github.com/containers/podman/issues/22845
+	sudo podman build --label=org.opencontainers.image.version=$(tag) --pull=always --squash -t $(image_name):$(tag) -t $(image_name):latest .
 
 .PHONY: build-qcow
 build-qcow:  ## build qcow2 image

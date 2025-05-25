@@ -31,7 +31,7 @@ jobs:
       - name: Build and push latest version
         run: |
           TAG=$(date "+%Y%m%d")
-          podman build --platform "$PLATFORM" --squash --manifest myserver --label=org.opencontainers.image.version=$TAG .
+          podman build --platform="$PLATFORM" --pull=always --squash --manifest=myserver --label=org.opencontainers.image.version=$TAG .
           podman manifest push myserver docker://$REGISTRY/$REPO:$TAG
           podman manifest push myserver docker://$REGISTRY/$REPO:latest
           podman manifest rm myserver
