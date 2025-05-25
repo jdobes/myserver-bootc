@@ -27,17 +27,18 @@ build-qcow:  ## build qcow2 image
 	  -v ./config.toml:/config.toml:ro \
 	  -v ./output:/output \
 	  -v /var/lib/containers/storage:/var/lib/containers/storage \
-	  quay.io/centos-bootc/bootc-image-builder:latest --type qcow2 $(image_name):latest
+	  quay.io/centos-bootc/bootc-image-builder:latest --type qcow2 --rootfs xfs $(image_name):latest
 	sudo chown -R $(user):$(user) output/
 
 .PHONY: build-iso
 build-iso:  ## build anaconda ISO
+# --rootfs is broken currently - https://github.com/osbuild/bootc-image-builder/issues/924
 	mkdir -p output
 	sudo podman run --rm -it --privileged --pull=newer --security-opt label=type:unconfined_t \
 	  -v ./config.toml:/config.toml:ro \
 	  -v ./output:/output \
 	  -v /var/lib/containers/storage:/var/lib/containers/storage \
-	  quay.io/centos-bootc/bootc-image-builder:latest --type anaconda-iso $(image_name):latest
+	  quay.io/centos-bootc/bootc-image-builder:latest --type anaconda-iso --rootfs xfs $(image_name):latest
 	sudo chown -R $(user):$(user) output/
 
 .PHONY: run-container
