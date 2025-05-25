@@ -1,6 +1,7 @@
 image_name := ghcr.io/jdobes/myserver
 tag := $(shell date "+%Y%m%d")
 platform := $(shell uname -sm)
+user := $(shell whoami)
 
 .PHONY: all
 all: clean build-oci build-qcow  ## clean and build OCI + qcow2 image (default)
@@ -26,7 +27,18 @@ build-qcow:  ## build qcow2 image
 	  -v ./config.toml:/config.toml:ro \
 	  -v ./output:/output \
 	  -v /var/lib/containers/storage:/var/lib/containers/storage \
-	  quay.io/centos-bootc/bootc-image-builder:latest --type qcow2 --local $(image_name):latest
+	  quay.io/centos-bootc/bootc-image-builder:latest --type qcow2 $(image_name):latest
+	sudo chown -R $(user):$(user) output/
+
+.PHONY: build-iso
+build-iso:  ## build anaconda ISO
+	mkdir -p output
+	sudo podman run --rm -it --privileged --pull=newer --security-opt label=type:unconfined_t \
+	  -v ./config.toml:/config.toml:ro \
+	  -v ./output:/output \
+	  -v /var/lib/containers/storage:/var/lib/containers/storage \
+	  quay.io/centos-bootc/bootc-image-builder:latest --type anaconda-iso $(image_name):latest
+	sudo chown -R $(user):$(user) output/
 
 .PHONY: run-container
 run-container:  ## run as a container

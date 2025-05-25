@@ -24,5 +24,6 @@ There is a `Makefile` to make local building and testing easier:
       clean            clean build artifacts
       build-oci        build OCI image
       build-qcow       build qcow2 image
+      build-iso        build anaconda ISO
       run-container    run as a container
       run-vm           run as a virtual machine
