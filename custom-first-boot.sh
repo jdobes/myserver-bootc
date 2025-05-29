@@ -28,5 +28,7 @@ cat > $gitconfig << "EOF"
 EOF
 chown $user:$user $gitconfig
 
+systemctl --user -M $user@ enable podman-auto-update.timer
+
 systemctl mask custom-first-boot.service
 echo "Masked custom-first-boot.service."
