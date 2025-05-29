@@ -9,6 +9,9 @@ RUN dnf -y install btop fastfetch git vim && \
 # Setting up permissions for rootless podman
 RUN echo "net.ipv4.ip_unprivileged_port_start=53" >> /etc/sysctl.conf
 
+# It's crashing currently and also don't need it
+RUN systemctl mask rpm-ostree-countme.timer
+
 # Other settings
 RUN echo "PasswordAuthentication no" >> /etc/ssh/sshd_config.d/custom.conf
 RUN rm -f /etc/motd.d/insights-client
