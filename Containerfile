@@ -6,9 +6,6 @@ RUN dnf config-manager --set-enabled crb && \
 RUN dnf -y install btop fastfetch git vim && \
     dnf clean all
 
-# Disable system auto updates
-RUN systemctl mask bootc-fetch-apply-updates.timer
-
 # Setting up permissions for rootless podman
 RUN echo "net.ipv4.ip_unprivileged_port_start=53" >> /etc/sysctl.conf
 
