@@ -28,7 +28,13 @@ build-qcow:  ## build qcow2 image
 	  -v ./output:/output \
 	  -v /var/lib/containers/storage:/var/lib/containers/storage \
 	  quay.io/centos-bootc/bootc-image-builder:latest --type qcow2 --rootfs xfs $(image_name):latest
+ifeq ($(platform),Linux x86_64)
 	sudo chown -R $(user):$(user) output/
+else ifeq ($(platform),Darwin arm64)
+	sudo chown -R $(user):staff output/
+else
+	@echo "Unsupported platform"
+endif
 
 .PHONY: build-iso
 build-iso:  ## build anaconda ISO
@@ -39,7 +45,13 @@ build-iso:  ## build anaconda ISO
 	  -v ./output:/output \
 	  -v /var/lib/containers/storage:/var/lib/containers/storage \
 	  quay.io/centos-bootc/bootc-image-builder:latest --type anaconda-iso --rootfs xfs $(image_name):latest
+ifeq ($(platform),Linux x86_64)
 	sudo chown -R $(user):$(user) output/
+else ifeq ($(platform),Darwin arm64)
+	sudo chown -R $(user):staff output/
+else
+	@echo "Unsupported platform"
+endif
 
 .PHONY: run-container
 run-container:  ## run as a container
