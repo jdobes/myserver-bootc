@@ -13,7 +13,8 @@ RUN echo "net.ipv4.ip_unprivileged_port_start=53" >> /etc/sysctl.conf
 RUN systemctl mask rpm-ostree-countme.timer
 
 # Other settings
-RUN echo "PasswordAuthentication no" >> /etc/ssh/sshd_config.d/custom.conf
+RUN echo "PasswordAuthentication no" >> /etc/ssh/sshd_config.d/custom.conf && \
+    echo "Port 57657" >> /etc/ssh/sshd_config.d/custom.conf
 RUN rm -f /etc/motd.d/insights-client
 
 # Setting up script to run on first boot when user exists
