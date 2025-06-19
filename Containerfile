@@ -16,6 +16,9 @@ RUN systemctl mask rpm-ostree-countme.timer
 RUN echo "PasswordAuthentication no" >> /etc/ssh/sshd_config.d/custom.conf && \
     echo "Port 57657" >> /etc/ssh/sshd_config.d/custom.conf
 RUN rm -f /etc/motd.d/insights-client
+RUN mkdir -p /etc/systemd/logind.conf.d/ && \
+    echo "[Login]" >> /etc/systemd/logind.conf.d/lidswitch.conf && \
+    echo "HandleLidSwitch=ignore" >> /etc/systemd/logind.conf.d/lidswitch.conf
 
 # Setting up script to run on first boot when user exists
 ADD custom-first-boot.sh      /usr/local/sbin
