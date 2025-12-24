@@ -3,7 +3,7 @@ FROM quay.io/centos-bootc/centos-bootc:stream10
 RUN dnf config-manager --set-enabled crb && \
     dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm
 
-RUN dnf -y install btop fastfetch git vim && \
+RUN dnf -y install btop fastfetch git vim rsync && \
     dnf clean all
 
 # Setting up permissions for rootless podman
