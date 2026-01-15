@@ -1,0 +1,24 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "packageRules": [
+    {
+      "matchCategories": ["docker"],
+      "groupName": "docker references",
+      "groupSlug": "docker-refs",
+      "pinDigests": true,
+      "automerge": true,
+      "automergeStrategy": "rebase",
+      "automergeType": "pr",
+      "automergeSchedule": ["0 2 * * 6"]
+    },
+    {
+      "matchCategories": ["ci"],
+      "groupName": "ci references",
+      "groupSlug": "ci-refs",
+      "pinDigests": true
+    }
+  ]
+}
