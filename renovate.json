@@ -3,6 +3,7 @@
   "extends": [
     "config:recommended"
   ],
+  "timezone": "Europe/Prague",
   "packageRules": [
     {
       "matchCategories": ["docker"],
@@ -18,7 +19,11 @@
       "matchCategories": ["ci"],
       "groupName": "ci references",
       "groupSlug": "ci-refs",
-      "pinDigests": true
+      "pinDigests": true,
+      "automerge": true,
+      "automergeStrategy": "rebase",
+      "automergeType": "pr",
+      "commitBody": "[skip ci]"
     }
   ]
 }
