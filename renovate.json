@@ -13,7 +13,7 @@
       "automerge": true,
       "automergeStrategy": "rebase",
       "automergeType": "pr",
-      "automergeSchedule": ["* 2 * * 6"]
+      "automergeSchedule": ["* 4 * * 6"]
     },
     {
       "matchCategories": ["ci"],
