@@ -44,6 +44,7 @@ jobs:
         with:
           packages: myserver
           keep-n-tagged: 5
+          delete-untagged: true
       - name: Cleanup
         run: |
           podman manifest rm myserver
