@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - "master"
+  pull_request:
+    branches:
+      - "master"
 
 jobs:
   build:
@@ -23,13 +26,18 @@ jobs:
       - name: Install qemu-user-static for multi-arch build
         run: |
           sudo apt update && sudo apt install -y qemu-user-static
-      - name: Login to registry
+      - name: Create tag
+        run: |
+          echo "TAG=$(date '+%Y%m%d')" >> $GITHUB_ENV
+      - name: Build latest version
+        run: |
+          podman build --platform="$PLATFORM" --pull=always --squash --manifest=myserver --label=org.opencontainers.image.version=$TAG .
+      - name: Login to registry and push built image
+        if: github.event_name == 'push'
         run: |
           echo "$REGISTRY_PASS" | podman login -u "$REGISTRY_USER" --password-stdin "$REGISTRY"
-      - name: Build and push latest version
-        run: |
-          TAG=$(date "+%Y%m%d")
-          podman build --platform="$PLATFORM" --pull=always --squash --manifest=myserver --label=org.opencontainers.image.version=$TAG .
           podman manifest push myserver docker://$REGISTRY/$REPO:$TAG
           podman manifest push myserver docker://$REGISTRY/$REPO:latest
+      - name: Cleanup
+        run: |
           podman manifest rm myserver
