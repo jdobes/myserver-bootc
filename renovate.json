@@ -6,24 +6,14 @@
   "timezone": "Europe/Prague",
   "packageRules": [
     {
-      "matchCategories": ["docker"],
-      "groupName": "docker references",
-      "groupSlug": "docker-refs",
+      "matchCategories": ["docker", "ci"],
+      "groupName": "references",
+      "groupSlug": "references",
       "pinDigests": true,
       "automerge": true,
       "automergeStrategy": "rebase",
       "automergeType": "pr",
       "automergeSchedule": ["* 4 * * 6"]
-    },
-    {
-      "matchCategories": ["ci"],
-      "groupName": "ci references",
-      "groupSlug": "ci-refs",
-      "pinDigests": true,
-      "automerge": true,
-      "automergeStrategy": "rebase",
-      "automergeType": "pr",
-      "commitBody": "[skip ci]"
     }
   ]
 }
