@@ -40,7 +40,7 @@ jobs:
           podman manifest push myserver docker://$REGISTRY/$REPO:latest
       - name: Delete old images
         if: github.event_name == 'push'
-        uses: dataaxiom/ghcr-cleanup-action@v1
+        uses: dataaxiom/ghcr-cleanup-action@cd0cdb900b5dbf3a6f2cc869f0dbb0b8211f50c4 # v1
         with:
           packages: myserver
           keep-n-tagged: 5
