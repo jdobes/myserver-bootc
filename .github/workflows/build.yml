@@ -38,6 +38,11 @@ jobs:
           echo "$REGISTRY_PASS" | podman login -u "$REGISTRY_USER" --password-stdin "$REGISTRY"
           podman manifest push myserver docker://$REGISTRY/$REPO:$TAG
           podman manifest push myserver docker://$REGISTRY/$REPO:latest
+      - name: Delete old images
+        if: github.event_name == 'push'
+        uses: dataaxiom/ghcr-cleanup-action@v1
+        with:
+          keep-n-tagged: 5
       - name: Cleanup
         run: |
           podman manifest rm myserver
