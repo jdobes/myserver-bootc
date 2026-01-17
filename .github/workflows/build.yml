@@ -42,6 +42,7 @@ jobs:
         if: github.event_name == 'push'
         uses: dataaxiom/ghcr-cleanup-action@v1
         with:
+          packages: myserver
           keep-n-tagged: 5
       - name: Cleanup
         run: |
