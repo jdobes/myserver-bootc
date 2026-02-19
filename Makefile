@@ -69,7 +69,7 @@ ifeq ($(platform),Linux x86_64)
 	  -monitor stdio \
 	  -vnc none \
 	  -net nic \
-	  -net user,hostfwd=tcp::2222-:22,hostfwd=tcp::5353-:53,hostfwd=tcp::8080-:80,hostfwd=tcp::8443-:443 \
+	  -net user,hostfwd=tcp::2222-:57657,hostfwd=tcp::5353-:53,hostfwd=tcp::8080-:80,hostfwd=tcp::8443-:443 \
 	  output/qcow2/disk.qcow2
 else ifeq ($(platform),Darwin arm64)
 	qemu-system-aarch64 \
@@ -82,7 +82,7 @@ else ifeq ($(platform),Darwin arm64)
 	  -vnc none \
 	  -machine virt \
 	  -net nic \
-	  -net user,hostfwd=tcp::2222-:22,hostfwd=tcp::5353-:53,hostfwd=tcp::8080-:80,hostfwd=tcp::8443-:443 \
+	  -net user,hostfwd=tcp::2222-:57657,hostfwd=tcp::5353-:53,hostfwd=tcp::8080-:80,hostfwd=tcp::8443-:443 \
 	  output/qcow2/disk.qcow2
 else
 	@echo "Unsupported platform"
