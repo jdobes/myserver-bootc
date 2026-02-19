@@ -25,4 +25,8 @@ ADD custom-first-boot.sh      /usr/local/sbin
 ADD custom-first-boot.service /usr/lib/systemd/system/
 RUN systemctl enable custom-first-boot.service
 
+ADD quadlet-sync/quadlet-sync         /usr/local/bin
+ADD quadlet-sync/quadlet-sync.service /usr/lib/systemd/user
+ADD quadlet-sync/quadlet-sync.timer   /usr/lib/systemd/user
+
 RUN bootc container lint || true

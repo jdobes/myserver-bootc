@@ -5,6 +5,7 @@ Customized CentOS Stream 10 bootc image for my servers. It features:
 - Extra packages installed
 - amd64 and arm64 variants
 - Automatic weekly image re-build using GitHub Actions
+- Simple systemd timer for Podman Quadlet GitOps
 
 ## How it works
 

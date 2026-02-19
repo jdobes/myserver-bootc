@@ -1,0 +1,6 @@
+[Unit]
+Description=Sync quadlets from git
+
+[Service]
+Type=oneshot
+ExecStart=quadlet-sync

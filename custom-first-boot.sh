@@ -28,7 +28,19 @@ cat > $gitconfig << "EOF"
 EOF
 chown $user:$user $gitconfig
 
-systemctl --user -M $user@ enable podman-auto-update.timer
+systemctl --user -M $user@ enable --now podman-auto-update.timer
+
+quadlet_sync_dir_cfg=/var/home/$user/.config/systemd/user/quadlet-sync.service.d
+mkdir $quadlet_sync_dir_cfg
+chown $user:$user $quadlet_sync_dir_cfg
+cat > $quadlet_sync_dir_cfg/env.conf << "EOF"
+[Service]
+Environment=GIT_URL=https://<PAT>@github.com/jdobes/quadlets.git
+Environment=GIT_SUBDIR=playground
+EOF
+chown $user:$user $quadlet_sync_dir_cfg/env.conf
+
+systemctl --user -M $user@ enable --now quadlet-sync.timer
 
 systemctl mask custom-first-boot.service
 echo "Masked custom-first-boot.service."

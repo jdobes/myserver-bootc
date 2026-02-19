@@ -1,0 +1,105 @@
+#!/usr/bin/bash
+# Script for simple git-ops
+
+set -e
+
+WORKDIR="$HOME/.quadlet-sync"
+mkdir -p "$WORKDIR" "$HOME/.config/containers"
+
+if [ "$GIT_URL" == "" ] || [ "$GIT_SUBDIR" == "" ]; then
+    echo "GIT_URL or GIT_SUBDIR not set!" && exit 1
+fi
+
+WORKDIR_GIT="$WORKDIR/git"
+WORKDIR_GIT_SUBDIR="$WORKDIR/git/$GIT_SUBDIR"
+WORKDIR_GIT_SUBDIR_QUADLETS="$WORKDIR/git/$GIT_SUBDIR/quadlets"
+TARGET_QUADLETS_DIR="$HOME/.config/containers/systemd"
+LAST_COMMIT_FILE="$WORKDIR/last_commit"
+touch "$LAST_COMMIT_FILE"
+
+# Clone or pull
+if [ ! -d "$WORKDIR_GIT" ]; then
+    echo "Git workdir doesn't exist, cloning..."
+    git clone "$GIT_URL" "$WORKDIR_GIT"
+else
+    if [ "$GIT_URL" != "$(git -C $WORKDIR_GIT remote get-url origin)" ]; then
+        echo "GIT_URL changed! Please check the cached git dir remote!" && exit 2
+    fi
+    #echo "Git workdir exist, pulling latest changes..."
+    git -C "$WORKDIR_GIT" pull > /dev/null
+fi
+
+# Check if subdir for this podman host exists
+if [ ! -d "$WORKDIR_GIT_SUBDIR" ]; then
+    echo "GIT_SUBDIR=$GIT_SUBDIR not found in git repo!" && exit 3
+fi
+
+if [ ! -d "$WORKDIR_GIT_SUBDIR_QUADLETS" ]; then
+    echo "Quadlets dir not found in git repo subdir!" && exit 4
+fi
+
+# Symlink git dir to systemd path
+if [ ! -d "$TARGET_QUADLETS_DIR" ]; then
+    ln -s "$WORKDIR_GIT_SUBDIR_QUADLETS" "$TARGET_QUADLETS_DIR"
+else
+    if [ ! -L "$TARGET_QUADLETS_DIR" ]; then
+        echo "Target quadlets dir is not symlink!" && exit 5
+    fi
+fi
+
+# Check changed files since the last check
+LAST_COMMIT=$(cat "$LAST_COMMIT_FILE")
+CURRENT_COMMIT=$(git -C "$WORKDIR_GIT" rev-parse HEAD)
+if [ "$LAST_COMMIT" != "" ]; then
+    CHANGED_FILES=$(git -C "$WORKDIR_GIT" diff --name-only $LAST_COMMIT $CURRENT_COMMIT | grep "^$GIT_SUBDIR/" || true)
+else
+    CHANGED_FILES=$(git -C "$WORKDIR_GIT" ls-files | grep "^$GIT_SUBDIR/" || true)
+fi
+
+CADDY_RELOAD="no"
+CONTAINERS=""
+if [ "$CHANGED_FILES" != "" ]; then
+    echo "Following files changed:"
+    for line in $CHANGED_FILES; do
+        echo "  $line"
+        if [[ "$line" == *".container" ]]; then
+            CONTAINERS="$CONTAINERS $(basename $line)"
+        fi
+        if [[ "$line" == *"/Caddyfile" ]]; then
+            CADDY_RELOAD="yes"
+        fi
+    done
+fi
+
+if [ "$CONTAINERS" == "" ]; then
+    #echo "No container files changed since the last pull."
+    exit 0
+fi
+
+systemctl --user daemon-reload
+
+# (Re)Start added/changed containers
+NAME_FILTER=""
+for container in $CONTAINERS; do
+    NAME_FILTER="$NAME_FILTER -f 'name=$container'"
+done
+UNITS=$(eval "podman quadlet list $NAME_FILTER --format '{{.UnitName}}'" | grep -v "UNIT" || true)
+for unit in $UNITS; do
+    systemctl --user restart $unit
+    echo "Restarted $unit"
+done
+
+# Stop deleted containers (possibly other non-container deleted services but there shouldn't be any)
+DELETED_UNITS=$(systemctl --user list-units --type=service --state=not-found --legend=false --plain | awk '{print $1};')
+for unit in $DELETED_UNITS; do
+    systemctl --user stop $unit
+    echo "Stopped $unit"
+done
+
+# Reload caddy if Caddyfile changed
+if [ "$CADDY_RELOAD" == "yes" ]; then
+    podman exec -w /etc/caddy caddy caddy reload
+fi
+
+# Save current state
+echo -n "$CURRENT_COMMIT" > "$LAST_COMMIT_FILE"
