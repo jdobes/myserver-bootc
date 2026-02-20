@@ -3,6 +3,13 @@
 
 set -e
 
+commit_state() {
+    # Save current state
+    if [ "$CURRENT_COMMIT" != "$LAST_COMMIT" ]; then
+        echo -n "$CURRENT_COMMIT" > "$LAST_COMMIT_FILE"
+    fi
+}
+
 WORKDIR="$HOME/.quadlet-sync"
 mkdir -p "$WORKDIR" "$HOME/.config/containers"
 
@@ -11,8 +18,8 @@ if [ "$GIT_URL" == "" ] || [ "$GIT_SUBDIR" == "" ]; then
 fi
 
 WORKDIR_GIT="$WORKDIR/git"
-WORKDIR_GIT_SUBDIR="$WORKDIR/git/$GIT_SUBDIR"
-WORKDIR_GIT_SUBDIR_QUADLETS="$WORKDIR/git/$GIT_SUBDIR/quadlets"
+WORKDIR_GIT_SUBDIR="$WORKDIR_GIT/$GIT_SUBDIR"
+WORKDIR_GIT_SUBDIR_QUADLETS="$WORKDIR_GIT_SUBDIR/quadlets"
 TARGET_QUADLETS_DIR="$HOME/.config/containers/systemd"
 LAST_COMMIT_FILE="$WORKDIR/last_commit"
 touch "$LAST_COMMIT_FILE"
@@ -73,9 +80,11 @@ fi
 
 if [ "$CONTAINERS" == "" ]; then
     #echo "No container files changed since the last pull."
+    commit_state
     exit 0
 fi
 
+# Some container relevant to current host changed - reload, restart and stop what's needed
 systemctl --user daemon-reload
 
 # (Re)Start added/changed containers
@@ -101,5 +110,4 @@ if [ "$CADDY_RELOAD" == "yes" ]; then
     podman exec -w /etc/caddy caddy caddy reload
 fi
 
-# Save current state
-echo -n "$CURRENT_COMMIT" > "$LAST_COMMIT_FILE"
+commit_state
