@@ -40,7 +40,8 @@ Environment=GIT_SUBDIR=playground
 EOF
 chown $user:$user $quadlet_sync_dir_cfg/env.conf
 
-systemctl --user -M $user@ enable --now quadlet-sync.timer
+# Start the timer manually when setting proper credentials
+#systemctl --user -M $user@ enable --now quadlet-sync.timer
 
 systemctl mask custom-first-boot.service
 echo "Masked custom-first-boot.service."
