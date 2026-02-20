@@ -31,7 +31,7 @@ jobs:
           echo "TAG=$(date '+%Y%m%d')" >> $GITHUB_ENV
       - name: Build latest version
         run: |
-          podman build --platform="$PLATFORM" --pull=always --squash --manifest=myserver --label=org.opencontainers.image.version=$TAG .
+          podman build --platform="$PLATFORM" --squash --manifest=myserver --label=org.opencontainers.image.version=$TAG .
       - name: Login to registry and push built image
         if: github.event_name == 'push'
         run: |
