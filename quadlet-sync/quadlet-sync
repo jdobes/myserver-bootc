@@ -63,7 +63,7 @@ else
     CHANGED_FILES=$(git -C "$WORKDIR_GIT" ls-files | grep "^$GIT_SUBDIR/" || true)
 fi
 
-CADDY_RELOAD="no"
+CADDY_RELOAD=""
 CONTAINERS=""
 if [ "$CHANGED_FILES" != "" ]; then
     echo "Following files changed:"
@@ -72,8 +72,11 @@ if [ "$CHANGED_FILES" != "" ]; then
         if [[ "$line" == *".container" ]]; then
             CONTAINERS="$CONTAINERS $(basename $line)"
         fi
+        if [[ "$line" == *"caddy.container" ]]; then
+            CADDY_RELOAD="${CADDY_RELOAD}no"
+        fi
         if [[ "$line" == *"/Caddyfile" ]]; then
-            CADDY_RELOAD="yes"
+            CADDY_RELOAD="${CADDY_RELOAD}yes"
         fi
     done
 fi
@@ -105,7 +108,7 @@ for unit in $DELETED_UNITS; do
     echo "Stopped $unit"
 done
 
-# Reload caddy if Caddyfile changed
+# Reload caddy if Caddyfile changed but container didn't
 if [ "$CADDY_RELOAD" == "yes" ]; then
     podman exec -w /etc/caddy caddy caddy reload
 fi
