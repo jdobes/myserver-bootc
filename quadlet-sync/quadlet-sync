@@ -23,7 +23,7 @@ if [ ! -d "$WORKDIR_GIT" ]; then
     git clone "$GIT_URL" "$WORKDIR_GIT"
 else
     if [ "$GIT_URL" != "$(git -C $WORKDIR_GIT remote get-url origin)" ]; then
-        echo "GIT_URL changed! Please check the cached git dir remote!" && exit 2
+        echo "GIT_URL changed! Please check the cached git dir remote!" && exit 1
     fi
     #echo "Git workdir exist, pulling latest changes..."
     git -C "$WORKDIR_GIT" pull > /dev/null
@@ -31,11 +31,11 @@ fi
 
 # Check if subdir for this podman host exists
 if [ ! -d "$WORKDIR_GIT_SUBDIR" ]; then
-    echo "GIT_SUBDIR=$GIT_SUBDIR not found in git repo!" && exit 3
+    echo "GIT_SUBDIR=$GIT_SUBDIR not found in git repo!" && exit 1
 fi
 
 if [ ! -d "$WORKDIR_GIT_SUBDIR_QUADLETS" ]; then
-    echo "Quadlets dir not found in git repo subdir!" && exit 4
+    echo "Quadlets dir not found in git repo subdir!" && exit 1
 fi
 
 # Symlink git dir to systemd path
@@ -43,7 +43,7 @@ if [ ! -d "$TARGET_QUADLETS_DIR" ]; then
     ln -s "$WORKDIR_GIT_SUBDIR_QUADLETS" "$TARGET_QUADLETS_DIR"
 else
     if [ ! -L "$TARGET_QUADLETS_DIR" ]; then
-        echo "Target quadlets dir is not symlink!" && exit 5
+        echo "Target quadlets dir is not symlink!" && exit 1
     fi
 fi
 
