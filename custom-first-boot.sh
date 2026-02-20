@@ -16,6 +16,7 @@ cat >> /var/home/$user/.bashrc << "EOF"
 
 PS1="[\[\e[96m\]\u\[\e[0m\]: \W\$(git branch 2> /dev/null | grep \-e '\* ' | sed 's/^..\(.*\)/ \[\e[92m\](\1)\[\e[0m\]/')]\$ "
 alias caddy-reload="podman exec -w /etc/caddy caddy caddy reload"
+podman-set-secret() { printf "$2" | podman secret create --replace $1 - ; }
 EOF
 
 gitconfig=/var/home/$user/.gitconfig
