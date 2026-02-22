@@ -5,7 +5,7 @@ Customized CentOS Stream 10 bootc image for my servers. It features:
 - Extra packages installed
 - amd64 and arm64 variants
 - Automatic weekly image re-build using GitHub Actions
-- Simple systemd timer for Podman Quadlet GitOps
+- Simple Podman Quadlet GitOps
 
 ## How it works
 
@@ -13,7 +13,17 @@ Customized CentOS Stream 10 bootc image for my servers. It features:
 2. Build OCI image using `podman`
 3. (For the first time setup) Build the qcow2 image for VM or ISO installer using `bootc-image-builder`
 
-## Usage
+## First-time setup
+
+1. Configure source Quadlet git repository and subdirectory name:
+
+       vim .config/systemd/user/quadlet-sync.service.d/env.conf
+
+2. Enable the timer:
+
+       systemctl --user enable --now quadlet-sync.timer
+
+## Development
 
 There is a `Makefile` to make local building and testing easier:
 

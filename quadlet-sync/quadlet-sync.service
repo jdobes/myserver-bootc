@@ -4,3 +4,5 @@ Description=Sync quadlets from git
 [Service]
 Type=oneshot
 ExecStart=quadlet-sync
+Environment=GIT_URL=
+Environment=GIT_SUBDIR=

@@ -20,6 +20,8 @@ podman-set-secret() { printf "$2" | podman secret create --replace $1 - ; }
 EOF
 
 gitconfig=/var/home/$user/.gitconfig
+quadlets_symlink=/var/home/$user/quadlets
+volumes_symlink=/var/home/$user/volumes
 cat > $gitconfig << "EOF"
 [user]
 	name = Jan Dobes
@@ -29,20 +31,20 @@ cat > $gitconfig << "EOF"
 EOF
 chown $user:$user $gitconfig
 
+ln -s .config/containers/systemd/ $quadlets_symlink
+ln -s .local/share/containers/storage/volumes/ $volumes_symlink
+chown -h $user:$user $quadlets_symlink $volumes_symlink
+
 systemctl --user -M $user@ enable --now podman-auto-update.timer
 
 quadlet_sync_dir_cfg=/var/home/$user/.config/systemd/user/quadlet-sync.service.d
 mkdir $quadlet_sync_dir_cfg
-chown $user:$user $quadlet_sync_dir_cfg
 cat > $quadlet_sync_dir_cfg/env.conf << "EOF"
 [Service]
 Environment=GIT_URL=https://<PAT>@github.com/jdobes/quadlets.git
 Environment=GIT_SUBDIR=playground
 EOF
-chown $user:$user $quadlet_sync_dir_cfg/env.conf
-
-# Start the timer manually when setting proper credentials
-#systemctl --user -M $user@ enable --now quadlet-sync.timer
+chown -R $user:$user $quadlet_sync_dir_cfg
 
 systemctl mask custom-first-boot.service
 echo "Masked custom-first-boot.service."
