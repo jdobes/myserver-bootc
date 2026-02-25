@@ -35,8 +35,6 @@ ln -s .config/containers/systemd/ $quadlets_symlink
 ln -s .local/share/containers/storage/volumes/ $volumes_symlink
 chown -h $user:$user $quadlets_symlink $volumes_symlink
 
-systemctl --user -M $user@ enable --now podman-auto-update.timer
-
 quadlet_sync_dir_cfg=/var/home/$user/.config/systemd/user/quadlet-sync.service.d
 mkdir $quadlet_sync_dir_cfg
 cat > $quadlet_sync_dir_cfg/env.conf << "EOF"
