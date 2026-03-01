@@ -21,12 +21,15 @@ RUN mkdir -p /etc/systemd/logind.conf.d/ && \
     echo "HandleLidSwitch=ignore" >> /etc/systemd/logind.conf.d/lidswitch.conf
 
 # Setting up script to run on first boot when user exists
-ADD custom-first-boot.sh      /usr/local/sbin
-ADD custom-first-boot.service /usr/lib/systemd/system/
+ADD custom-first-boot.sh                     /usr/local/sbin
+ADD systemd/system/custom-first-boot.service /usr/lib/systemd/system/
+
 RUN systemctl enable custom-first-boot.service
 
-ADD quadlet-sync/quadlet-sync         /usr/local/bin
-ADD quadlet-sync/quadlet-sync.service /usr/lib/systemd/user
-ADD quadlet-sync/quadlet-sync.timer   /usr/lib/systemd/user
+ADD quadlet-sync                            /usr/local/bin
+ADD systemd/user/quadlet-sync.service       /usr/lib/systemd/user
+ADD systemd/user/quadlet-sync.timer         /usr/lib/systemd/user
+ADD systemd/user/podman-image-prune.service /usr/lib/systemd/user
+ADD systemd/user/podman-image-prune.timer   /usr/lib/systemd/user
 
 RUN bootc container lint || true

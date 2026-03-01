@@ -44,5 +44,7 @@ Environment=GIT_SUBDIR=playground
 EOF
 chown -R $user:$user $quadlet_sync_dir_cfg
 
+systemctl --user -M $user@ enable --now podman-image-prune.timer
+
 systemctl mask custom-first-boot.service
 echo "Masked custom-first-boot.service."
