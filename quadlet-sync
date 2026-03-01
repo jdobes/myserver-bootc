@@ -81,32 +81,30 @@ if [ "$CHANGED_FILES" != "" ]; then
     done
 fi
 
-if [ "$CONTAINERS" == "" ]; then
-    #echo "No container files changed since the last pull."
-    commit_state
-    exit 0
+if [ "$CONTAINERS" != "" ]; then
+    # Some container relevant to current host changed - reload, restart and stop what's needed
+    systemctl --user daemon-reload
+
+    # (Re)Start added/changed containers
+    NAME_FILTER=""
+    for container in $CONTAINERS; do
+        NAME_FILTER="$NAME_FILTER -f 'name=$container'"
+    done
+    UNITS=$(eval "podman quadlet list $NAME_FILTER --format '{{.UnitName}}'" | grep -v "UNIT" || true)
+    for unit in $UNITS; do
+        systemctl --user restart $unit
+        echo "Restarted $unit"
+    done
+
+    # Stop deleted containers (possibly other non-container deleted services but there shouldn't be any)
+    DELETED_UNITS=$(systemctl --user list-units --type=service --state=not-found --legend=false --plain | awk '{print $1};')
+    for unit in $DELETED_UNITS; do
+        systemctl --user stop $unit
+        echo "Stopped $unit"
+    done
+else
+    echo "No container files changed since the last pull."
 fi
-
-# Some container relevant to current host changed - reload, restart and stop what's needed
-systemctl --user daemon-reload
-
-# (Re)Start added/changed containers
-NAME_FILTER=""
-for container in $CONTAINERS; do
-    NAME_FILTER="$NAME_FILTER -f 'name=$container'"
-done
-UNITS=$(eval "podman quadlet list $NAME_FILTER --format '{{.UnitName}}'" | grep -v "UNIT" || true)
-for unit in $UNITS; do
-    systemctl --user restart $unit
-    echo "Restarted $unit"
-done
-
-# Stop deleted containers (possibly other non-container deleted services but there shouldn't be any)
-DELETED_UNITS=$(systemctl --user list-units --type=service --state=not-found --legend=false --plain | awk '{print $1};')
-for unit in $DELETED_UNITS; do
-    systemctl --user stop $unit
-    echo "Stopped $unit"
-done
 
 # Reload caddy if Caddyfile changed but container didn't
 if [ "$CADDY_RELOAD" == "yes" ]; then
