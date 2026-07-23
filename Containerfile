@@ -1,4 +1,4 @@
-FROM quay.io/centos-bootc/centos-bootc:stream10@sha256:95397e8d1f672245159fdd4986130ec3999a91f3c6a5a788ce1d5ca28567e012
+FROM quay.io/centos-bootc/centos-bootc:stream10@sha256:02fac3f064e9936f22d68bc7c95335fa6868204ebe75f182211d22c177352124
 
 RUN dnf config-manager --set-enabled crb && \
     dnf -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-10.noarch.rpm
